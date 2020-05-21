@@ -2,7 +2,7 @@ export default async function getWeather(apiKey, lat, lng) {
   const url = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lng}&appid=${apiKey}&units=metric`;
   const res = await fetch(url);
   const data = await res.json();
-  console.log(data)
+  console.log(data);
   return data;
 }
 
