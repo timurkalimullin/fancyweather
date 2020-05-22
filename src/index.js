@@ -3,6 +3,8 @@ import './styles/scss.scss';
 import getIPInfo from './js/getIPInfo';
 import getWeather from './js/getWeather';
 import {getGeoData_fromPlaceName, getGeoData_fromCoord} from './js/getGeoData';
+import getlocaleTime from './js/getlocaleTime';
+import getLocaleTime from './js/getlocaleTime';
 
 
 const apiKeyIPInfo = 'ad4cb296462880';
@@ -13,7 +15,7 @@ class App {
   constructor() {
     this.coord = null;
     this.lang = 'ru';
-    this.timeZone = null;
+    this.timeOffset = null;
     this.placeName = null;
   }
 
@@ -27,8 +29,9 @@ class App {
   }
 
   formOutputData(data) {
+    const ms = 1000; /* milliseconds in second */
     this.placeName = data.results[0].formatted;
-    this.timeZone = data.results[0].annotations.timezone.offset_sec;
+    this.timeOffset = data.results[0].annotations.timezone.offset_sec*ms;
     this.coord = data.results[0].bounds.northeast;
   }
 
@@ -41,6 +44,11 @@ class App {
     const geoData = await getGeoData_fromCoord(apiKeyGeoData, this.coord.lat, this.coord.lng, this.lang);
     this.formOutputData(geoData);
   }
+
+  async getWeather_atCoordinates() {
+    const weatherData = await getWeather(apiKeyWeather, this.coord.lat, this.coord.lng);
+    return weatherData;
+  }
 }
 
 const app = new App();
@@ -49,9 +57,13 @@ app.coord = {
   lat: 41.234,
   lng: 32.554
 }
-app.getData_fromCoordinates()
+// app.getUserCoordinates().then(()=>app.getData_fromCoordinates()).then(()=>app.getWeather_atCoordinates())
+
 console.log(app);
+// app.getData_fromPlacename('miami usa').then(()=>app.getWeather_atCoordinates())
+// setInterval(getlocaleTime.bind(null, 18000000), 1000)
 
-let date = new Date().toUTCString()
-console.log(date)
-
+function timer() {
+  document.body.innerHTML = getlocaleTime(app.timeOffset).toUTCString();
+}
+setInterval(timer, 1000)
