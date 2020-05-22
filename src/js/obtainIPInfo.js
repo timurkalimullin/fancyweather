@@ -1,8 +1,7 @@
-export default async function getIPInfo(apiKey) {
+export default async function obtainIPInfo(apiKey) {
   const url = `https://ipinfo.io/json?token=${apiKey}`;
   const res = await fetch(url);
   const data = await res.json();
-  console.log(data);
   return data;
 }
 

@@ -1,12 +1,11 @@
-export default async function getWeather(apiKey, lat, lng) {
-  const url = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lng}&appid=${apiKey}&units=metric`;
+export default async function obtainWeather(apiKey, lat, lng, lang) {
+  const url = `
+  https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lng}&appid=${apiKey}&units=metric&${lang}
+  `;
   const res = await fetch(url);
   const data = await res.json();
-  console.log(data);
   return data;
 }
-
-// api.openweathermap.org/data/2.5/forecast/daily?lat={lat}&lon={lon}&cnt={cnt}&appid={your api key}  for coordinates
 
 // {"coord": { "lon": 139,"lat": 35},
 //   "weather": [
