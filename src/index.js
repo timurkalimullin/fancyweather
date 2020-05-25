@@ -2,6 +2,7 @@ import './styles/scss.scss';
 
 import WeatherData from './js/WeatherData/WeatherData';
 import translatePlacename from './js/translatePlacename';
+import translations from './js/translations/translations';
 
 class App {
   constructor() {
@@ -11,16 +12,19 @@ class App {
   }
 
   async translatePlacename() {
-    await this.weatherData.findWeatherAtPlace('могадишо');
     this.translatedPlacename = await translatePlacename(this.weatherData.placeName);
-    console.log(this);
   }
 }
 
 const app = new App();
+app.weatherData.findWeatherAtPlace('chicago')
+.then(()=>{
+  document.body.innerHTML = `
+<div></div>
+<img src="${translations.icons[app.weatherData.parsedWeatherData['4/26/2020'].weather_id].night}">
+</div>
+`;
+})
+console.log(app);
 
-async function qqq() {
-  await app.translatePlacename();
-  document.body.append(JSON.stringify(app.translatedPlacename.be));
-}
-qqq();
+
