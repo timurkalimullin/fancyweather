@@ -10,9 +10,9 @@ const apiKeyGeoData = '5f01a3a9d68f415c94ad261794e7fae4';
 export default class WeatherData {
   constructor() {
     this.coord = null;
-    this.lang = 'en';
     this.timeOffset = null;
     this.placeName = null;
+    this.parsedWeatherData = null;
   }
 
   async getUserCoordinates() {
@@ -32,18 +32,18 @@ export default class WeatherData {
   }
 
   async getDatafromPlacename(placeName) {
-    const geoData = await obtainGeoDatafromPlaceName(apiKeyGeoData, placeName, this.lang);
+    const geoData = await obtainGeoDatafromPlaceName(apiKeyGeoData, placeName);
     this.formLocationData(geoData);
   }
 
   /* eslint-disable max-len */
   async getDatafromCoordinates() {
-    const geoData = await obtainGeoDatafromCoord(apiKeyGeoData, this.coord.lat, this.coord.lng, this.lang);
+    const geoData = await obtainGeoDatafromCoord(apiKeyGeoData, this.coord.lat, this.coord.lng);
     this.formLocationData(geoData);
   }
 
   async getWeatheratCoordinates() {
-    const weatherData = await obtainWeather(apiKeyWeather, this.coord.lat, this.coord.lng, this.lang);
+    const weatherData = await obtainWeather(apiKeyWeather, this.coord.lat, this.coord.lng);
     const parsedWeatherData = await parseWeatherParametres(weatherData.list);
     this.parsedWeatherData = parsedWeatherData;
   }

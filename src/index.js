@@ -1,11 +1,26 @@
 import './styles/scss.scss';
 
 import WeatherData from './js/WeatherData/WeatherData';
+import translatePlacename from './js/translatePlacename';
 
-const weatherData = new WeatherData();
+class App {
+  constructor() {
+    this.weatherData = new WeatherData();
+    this.lang = localStorage.lang || 'en';
+    this.translatedPlacename = null;
+  }
 
-window.onload = () => {
-  weatherData.initialLoad()
-    .then(() => document.body.append(JSON.stringify(weatherData)));
-  console.log(weatherData);
-};
+  async translatePlacename() {
+    await this.weatherData.findWeatherAtPlace('могадишо');
+    this.translatedPlacename = await translatePlacename(this.weatherData.placeName);
+    console.log(this);
+  }
+}
+
+const app = new App();
+
+async function qqq() {
+  await app.translatePlacename();
+  document.body.append(JSON.stringify(app.translatedPlacename.be));
+}
+qqq();
