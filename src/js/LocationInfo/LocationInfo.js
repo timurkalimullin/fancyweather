@@ -1,18 +1,21 @@
 import obtainIPInfo from './obtainIPInfo';
 import obtainWeather from './obtainWeather';
 import { obtainGeoDatafromPlaceName, obtainGeoDatafromCoord } from './obtainGeoData';
-import parseWeatherParametres from './parseWeatherParametres';
+import translatePlacename from './translatePlacename';
+import obtainLocaleTime from './obtainLocaleTime';
+import obtainLocaleSeason from './obtainLocaleSeason';
+import obtainLocaleDayTime from './obtainLocaleDayTime';
 
 const apiKeyIPInfo = 'ad4cb296462880';
 const apiKeyWeather = 'df8d41cc3412c9b1ac992d87f6fa81d3';
 const apiKeyGeoData = '5f01a3a9d68f415c94ad261794e7fae4';
 
-export default class WeatherData {
+export default class LocationInfo {
   constructor() {
     this.coord = null;
     this.timeOffset = null;
     this.placeName = null;
-    this.parsedWeatherData = null;
+    this.weatherData = null;
   }
 
   async getUserCoordinates() {
@@ -44,19 +47,40 @@ export default class WeatherData {
 
   async getWeatheratCoordinates() {
     const weatherData = await obtainWeather(apiKeyWeather, this.coord.lat, this.coord.lng);
-    const parsedWeatherData = await parseWeatherParametres(weatherData.list);
-    this.parsedWeatherData = parsedWeatherData;
+    this.weatherData = weatherData;
   }
   /* eslint-enable max-len */
 
+  async translatePlacename() {
+    this.placeName = await translatePlacename(this.placeName);
+  }
+
+  getTimeData() {
+    this.currentTime = obtainLocaleTime(this.timeOffset);
+    this.season = obtainLocaleSeason(this.currentTime, this.coord.lat);
+    this.dayTime = obtainLocaleDayTime(this.currentTime);
+  }
+
   async initialLoad() {
-    await this.getUserCoordinates();
-    await this.getDatafromCoordinates();
-    await this.getWeatheratCoordinates();
+    try {
+      await this.getUserCoordinates();
+      await this.getDatafromCoordinates();
+      await this.getWeatheratCoordinates();
+      this.getTimeData();
+      await this.translatePlacename();
+    } catch (error) {
+      console.log(error.message);
+    }
   }
 
   async findWeatherAtPlace(placeName) {
-    await this.getDatafromPlacename(placeName);
-    await this.getWeatheratCoordinates();
+    try {
+      await this.getDatafromPlacename(placeName);
+      await this.getWeatheratCoordinates();
+      this.getTimeData();
+      await this.translatePlacename();
+    } catch (error) {
+      console.log(error.message);
+    }
   }
 }

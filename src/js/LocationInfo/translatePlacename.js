@@ -1,7 +1,8 @@
 export default async function translatePlacename(placeName) {
   const modifiedPlacename = [];
-  modifiedPlacename.push(placeName.split(',').shift());
-  modifiedPlacename.push(placeName.split(',').pop());
+  const splittedPlaceName = placeName.split(',');
+  modifiedPlacename.push(splittedPlaceName.shift());
+  modifiedPlacename.push(splittedPlaceName.pop());
   modifiedPlacename.join('');
 
   const temp = {
