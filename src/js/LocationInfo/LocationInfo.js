@@ -32,7 +32,7 @@ export default class LocationInfo {
     const ms = 1000; /* milliseconds in second */
     this.placeName = data.results[0].formatted;
     this.timeOffset = data.results[0].annotations.timezone.offset_sec * ms;
-    this.coord = data.results[0].bounds.northeast;
+    this.coord = data.results[0].geometry;
   }
 
   async getDatafromPlacename(placeName) {
@@ -48,7 +48,15 @@ export default class LocationInfo {
 
   async getWeatheratCoordinates() {
     const weatherData = await obtainWeather(apiKeyWeather, this.coord.lat, this.coord.lng);
-    conversetempScale(weatherData);
+    weatherData.current.temp = conversetempScale(weatherData.current.temp);
+    weatherData.current.feels_like = conversetempScale(weatherData.current.feels_like);
+    weatherData.daily.forEach((day) => {
+    /* eslint-disable no-param-reassign */
+      Object.keys(day.temp).forEach((key) => {
+        day.temp[key] = conversetempScale(day.temp[key]);
+      });
+      /* eslint-enable no-param-reassign */
+    });
     this.weatherData = weatherData;
   }
   /* eslint-enable max-len */
@@ -64,25 +72,17 @@ export default class LocationInfo {
   }
 
   async initialLoad() {
-    try {
-      await this.getUserCoordinates();
-      await this.getDatafromCoordinates();
-      await this.getWeatheratCoordinates();
-      this.getTimeData();
-      await this.translatePlacename();
-    } catch (error) {
-      console.log(error.message);
-    }
+    await this.getUserCoordinates();
+    await this.getDatafromCoordinates();
+    await this.getWeatheratCoordinates();
+    this.getTimeData();
+    await this.translatePlacename();
   }
 
   async findWeatherAtPlace(placeName) {
-    try {
-      await this.getDatafromPlacename(placeName);
-      await this.getWeatheratCoordinates();
-      this.getTimeData();
-      await this.translatePlacename();
-    } catch (error) {
-      console.log(error.message);
-    }
+    await this.getDatafromPlacename(placeName);
+    await this.getWeatheratCoordinates();
+    this.getTimeData();
+    await this.translatePlacename();
   }
 }

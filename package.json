@@ -59,6 +59,8 @@
   },
   "dependencies": {
     "@babel/polyfill": "^7.8.7",
-    "normalize.css": "^8.0.1"
+    "mapbox-gl": "^1.10.1",
+    "normalize.css": "^8.0.1",
+    "swiper": "^5.4.1"
   }
 }

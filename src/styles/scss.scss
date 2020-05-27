@@ -1,1 +1,26 @@
 @import '~normalize.css';
+@import url('https://api.mapbox.com/mapbox-gl-js/v1.10.1/mapbox-gl.css');
+@import '../../node_modules/swiper/css/swiper.min.css';
+
+#mapbox{
+  width: 400px;
+  height: 400px;
+  clip-path: polygon(20% 0%, 80% 0%, 100% 20%, 100% 80%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
+}
+
+.slide__icon{
+  width: 100px;
+  height: 100px;
+  img{
+    width: 100%;
+  }
+}
+
+.swiper-slide__container{
+  width: 300px;
+}
+
+.swiper-slide {
+  width: 300px;
+}
+
