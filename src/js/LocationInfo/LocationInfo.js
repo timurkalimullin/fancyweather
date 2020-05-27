@@ -5,6 +5,7 @@ import translatePlacename from './translatePlacename';
 import obtainLocaleTime from './obtainLocaleTime';
 import obtainLocaleSeason from './obtainLocaleSeason';
 import obtainLocaleDayTime from './obtainLocaleDayTime';
+import conversetempScale from './converseTempScale';
 
 const apiKeyIPInfo = 'ad4cb296462880';
 const apiKeyWeather = 'df8d41cc3412c9b1ac992d87f6fa81d3';
@@ -47,6 +48,7 @@ export default class LocationInfo {
 
   async getWeatheratCoordinates() {
     const weatherData = await obtainWeather(apiKeyWeather, this.coord.lat, this.coord.lng);
+    conversetempScale(weatherData);
     this.weatherData = weatherData;
   }
   /* eslint-enable max-len */

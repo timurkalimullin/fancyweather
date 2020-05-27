@@ -466,6 +466,21 @@ const translations = {
     ru: 'Искать место',
     be: 'Шукаць месца',
   },
+  feelslike: {
+    en: 'feels like',
+    ru: 'ощущается как',
+    be: 'адчуваецца як',
+  },
+  wind: {
+    en: 'wind',
+    ru: 'ветер',
+    be: 'вецер',
+  },
+  humidity: {
+    en: 'humidity',
+    ru: 'влажность',
+    be: 'вільготнасць',
+  },
 };
 
 export default translations;
