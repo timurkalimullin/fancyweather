@@ -420,13 +420,13 @@ const translations = {
   coords: {
     lat: {
       en: 'latitude',
-      ru: 'широта',
-      be: 'шырата',
+      ru: 'широты',
+      be: 'шыраты',
     },
     lng: {
-      eng: 'longitude',
-      ru: 'долгота',
-      be: 'даўгата',
+      en: 'longitude',
+      ru: 'долготы',
+      be: 'даўгаты',
     },
   },
 };

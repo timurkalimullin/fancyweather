@@ -16,6 +16,9 @@ async function obtainGeoDatafromPlaceName(apiKey, place) {
   if (data.status.code !== 200) {
     throw new Error(data.status.message);
   }
+  if (data.results.length === 0) {
+    throw new Error('Sorry, can`t find this location');
+  }
   return data;
 }
 
