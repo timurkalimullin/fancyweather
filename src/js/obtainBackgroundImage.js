@@ -8,5 +8,6 @@ export default async function obtainBackgroundImage(...args) {
   const url = `https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=${apiKey}&tags=${query}&tag_mode=all&extras=url_h&format=json&nojsoncallback=1`;
   const res = await fetch(url);
   const data = await res.json();
-  return data;
+  const resultData = Object.values(data.photos.photo).filter((el) => el.url_h);
+  return resultData;
 }

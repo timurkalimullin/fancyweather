@@ -14,7 +14,7 @@ class App {
   constructor(root) {
     this.root = document.querySelector(root);
     this.locationInfo = new LocationInfo();
-    this.lang = localStorage.lang || 'ru';
+    this.lang = localStorage.lang || 'be';
     this.scale = 'cel';
   }
 
@@ -27,10 +27,10 @@ class App {
     const placeName = this.locationInfo.placeName.en;
     const { season } = this.locationInfo;
     const { dayTime } = this.locationInfo;
-    const weather = this.locationInfo.weatherData.current.weather[0].description;
-    const wallPaper = await obtainBackgroundImage(placeName, season, dayTime, weather);
-    const randomPhoto = Math.floor(Math.random() * wallPaper.photos.photo.length);
-    this.root.style.backgroundImage = `url(${wallPaper.photos.photo[randomPhoto].url_h})`;
+    const wallPaper = await obtainBackgroundImage(placeName, season, dayTime);
+    const randomPhoto = Math.floor(Math.random() * wallPaper.length);
+    this.root.style.backgroundImage = `linear-gradient(rgba(8, 15, 26, 0.7) 0%, rgba(17, 17, 46, 0.46) 100%),
+    url(${wallPaper[randomPhoto].url_h})`;
   }
 
   makeFormattedDate(date) {
@@ -84,9 +84,13 @@ class App {
         nextEl: '.swiper-button-next',
         prevEl: '.swiper-button-prev',
       },
-      slidesPerView: 4,
+      slidesPerView: 1,
       speed: 400,
-      spaceBetween: 100,
+      breakpoints: {
+        500: {
+          slidesPerView: 3,
+        },
+      },
     });
     Object.keys(this.locationInfo.weatherData.daily).forEach((key) => {
       const slide = this.makeSlide(this.locationInfo.weatherData.daily[key]);
@@ -118,18 +122,20 @@ class App {
     const control = document.createElement('div');
     control.classList.add('control-block');
     control.innerHTML = `
-    <button class="btn btn__refresh">Refresh</button>
-    <select name="lang-select" class="lang-select">
-      <option value="en">ENG</option>
-      <option value="ru">РУС</option>
-      <option value="be">БЕЛ</option>
-    </select>
-    <button class="temp-scale">Far</button>
-    <button class="temp-scale">Cel</button>
-
+    <div class="btn__wrapper">
+      <button class="btn btn__refresh raise"><i class="icon-arrows-cw"></i></button>
+      <select name="lang-select" class="lang-select">
+        <option value="en">ENG</option>
+        <option value="ru">РУС</option>
+        <option value="be">БЕЛ</option>
+      </select>
+      <button data="far" class="btn btn__temp-scale">°F</button>
+      <button data="cel" class="btn btn__temp-scale">°C</button>
+    </div>
     <form class="search-form">
       <input type="text" name="search-input" class="search-form__input" placeholder="${translations.placeholder[this.lang]}">
-      <button class="btn btn__submit">Search</button>
+      <button type="submit" class="btn btn__submit"><i class="icon-search"></i></button>
+      <button class="btn btn__mic" type="button"><i class="icon-mic"></i></button>
     </form>
     `;
     this.root.append(control);
@@ -149,19 +155,20 @@ class App {
     const main = document.createElement('div');
     main.classList.add('main');
     main.innerHTML = `
+    <div class="main__container">
       <div class="main__info">
         <div class="main__info__wrapper">
           <div class="main__info__title">
             <div class="main__placename">${this.locationInfo.placeName[this.lang]}</div>
             <div class="main__date">${this.makeFormattedDate(this.locationInfo.currentTime)}</div>
-            <div class="main__temperature">${temp} ${translations.temp_units[this.scale]}</div>
-          </div>
-          <div class="main__info__descr">
-            <div class="main__icon"><img src=${translations.icons[id][dayTime]} alt="weather-icon"></div>
-            <div class="weather_descr">${weatherDescr.toUpperCase()}</div>
+            <div class="main__temperature"><img src="./images/thermometer.svg">${temp} ${translations.temp_units[this.scale]}</div>
             <div class="feelslike">${translations.feelslike[this.lang].toUpperCase()} : ${feelsLike} ${translations.temp_units[this.scale]}</div>
             <div class="humidity">${translations.humidity[this.lang].toUpperCase()} : ${humidity} %</div>
             <div class="wind">${translations.wind[this.lang].toUpperCase()} : ${wind} ${translations.speed[this.lang]}</div>
+          </div>
+          <div class="main__info__graphic">
+            <div class="main__icon"><img src=${translations.icons[id][dayTime]} alt="weather-icon"></div>
+            <div class="weather_descr">${weatherDescr.toUpperCase()}</div>
           </div>
         </div>
         <div class="swiper-container">
@@ -172,23 +179,41 @@ class App {
       </div>
       <div class="main__map">
         <div id="mapbox" class="mapbox"></div>
-        <p class="lat">${this.locationInfo.coord.lat} ${latitude}</p>
-        <p class="lat">${this.locationInfo.coord.lng} ${longitude}</p>
+        <p class="lat">${this.locationInfo.dms.lat}  ${latitude}</p>
+        <p class="lat">${this.locationInfo.dms.lng}  ${longitude}</p>
       </div>
+    </div>
     `;
     this.root.append(main);
     setInterval(this.timer.bind(this, document.querySelector('.main__date')), 1000);
     this.renderSwiper('.swiper-container');
     this.renderMap('mapbox');
   }
+
+  clearMain() {
+    document.querySelector('.main').remove();
+    return this;
+  }
 }
 
 const app = new App('.app');
 
 window.onload = async () => {
-  await app.locationInfo.findWeatherAtPlace('минск');
-  await app.setBackGroundImage();
-  app.renderControlBlock();
-  app.renderMainBlock();
-  console.log(app);
+  try {
+    app.renderControlBlock();
+    await app.locationInfo.findWeatherAtPlace('эдинбург');
+    await app.setBackGroundImage();
+    app.renderMainBlock();
+    document.querySelector('.control-block').addEventListener('click', (e) => {
+      if (e.target.closest('.btn__temp-scale')) {
+        const scale = e.target.getAttribute('data');
+        app.scale = scale;
+        app.clearMain();
+        app.renderMainBlock();
+      }
+    });
+    console.log(app);
+  } catch (err) {
+    console.log(err.message);
+  }
 };

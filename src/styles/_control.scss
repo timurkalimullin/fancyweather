@@ -1,0 +1,35 @@
+.btn, select{
+  padding: 3px 6px;
+  border: 2px solid lightgray;
+  border-radius: 4px;
+  color: lightgray;
+  background: transparent;
+  transition: 0.1s all;
+  &:hover{
+    border-color: cyan;
+    color: rgb(247, 115, 177);
+  }
+}
+
+.btn{
+  &:active{
+    transform: translate(2px, -2px);
+  }
+}
+
+.control-block{
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  padding: 15px 8%;
+  margin-bottom: 30px;
+}
+
+.search-form__input{
+  margin-bottom: 10px;
+}
+
+.btn__wrapper{
+  width: 240px;
+  margin-bottom: 10px;
+}

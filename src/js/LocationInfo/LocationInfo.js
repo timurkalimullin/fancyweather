@@ -33,6 +33,7 @@ export default class LocationInfo {
     this.placeName = data.results[0].formatted;
     this.timeOffset = data.results[0].annotations.timezone.offset_sec * ms;
     this.coord = data.results[0].geometry;
+    this.dms = data.results[0].annotations.DMS;
   }
 
   async getDatafromPlacename(placeName) {

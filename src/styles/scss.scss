@@ -2,34 +2,92 @@
 @import url('https://api.mapbox.com/mapbox-gl-js/v1.10.1/mapbox-gl.css');
 @import '../../node_modules/swiper/css/swiper.min.css';
 
-#mapbox{
-  width: 400px;
-  height: 400px;
-  clip-path: circle(50% at 50% 50%);
+@import './_control.scss';
+@import './_main.scss';
+
+@font-face {
+  font-family: 'fontello';
+  src:url('../assets/fonts/fontello.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+ [class^="icon-"]:before, [class*=" icon-"]:before {
+  font-family: "fontello";
+  font-style: normal;
+  font-weight: normal;
+  speak: never;
+
+  display: inline-block;
+  text-decoration: inherit;
+  width: 1em;
+  margin-right: .2em;
+  text-align: center;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1em;
+  margin-left: .2em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-search:before { content: '\e800'; } /* '' */
+.icon-arrows-cw:before { content: '\e801'; } /* '' */
+.icon-mic:before { content: '\f130'; } /* '' */
+
+*{
+  box-sizing: border-box;
 }
 
 .app{
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+  padding: 20px 0;
   background-size: cover;
   background-repeat: no-repeat;
-  background-attachment: fixed;
   background-position: center;
-  background-color: black;
-  background-blend-mode: normal;
+  font-family: 'Exo 2', sans-serif;
 }
 
-.slide__icon{
-  width: 100px;
-  height: 100px;
-  img{
-    width: 100%;
+@media (max-width: 968px) {
+  .main{
+    &__container{
+      flex-direction: column;
+      align-items: center;
+    }
+    &__info{
+      width: 95%;
+    }
   }
 }
 
-.swiper-slide__container{
-  width: 300px;
+@media (max-width: 630px) {
+  .main{
+    &__container{
+      font-size: 14px;
+      padding: 0;
+    }
+    &__info{
+      &__wrapper{
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+    &__temperature{
+      font-size: 2em;
+    }
+  }
+  .control-block{
+    text-align: center;
+    margin-bottom: 25px;
+  }
+  .btn__wrapper{
+    margin: 0 auto;
+    margin-bottom: 10px;
+  }
+  .search-form{
+    width: 100%;
+    text-align: center;
+  }
 }
-
-.swiper-slide {
-  width: 300px;
-}
-
