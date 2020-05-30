@@ -5,6 +5,7 @@ import Swiper from 'swiper';
 import LocationInfo from './js/LocationInfo/LocationInfo';
 import translations from './js/translations/translations';
 import obtainBackgroundImage from './js/obtainBackgroundImage';
+import obtainLocaleTime from './js/LocationInfo/obtainLocaleTime';
 
 const mapboxgl = require('mapbox-gl/dist/mapbox-gl.js');
 
@@ -46,10 +47,9 @@ class App {
     return `${localeFormatted}  ${hours}:${minutes}:${seconds}`;
   }
 
-  timer(nodeElement) {
-    const dateContent = nodeElement;
-    dateContent.innerHTML = this.makeFormattedDate(this.locationInfo.currentTime);
-    this.locationInfo.currentTime += 1000;
+  timer(nodeSelector) {
+    const momentDate = obtainLocaleTime(this.locationInfo.timeOffset);
+    document.querySelector(nodeSelector).innerHTML = this.makeFormattedDate(momentDate);
   }
 
   makeSlide(data) {
@@ -185,7 +185,7 @@ class App {
     </div>
     `;
     this.root.append(main);
-    setInterval(this.timer.bind(this, document.querySelector('.main__date')), 1000);
+    setInterval(this.timer.bind(this, ('.main__date')), 1000);
     this.renderSwiper('.swiper-container');
     this.renderMap('mapbox');
   }
