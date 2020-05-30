@@ -15,7 +15,11 @@ export default async function translatePlacename(placeName) {
   await Promise.all(Object.keys(temp).map((lang) => fetch(`https://translate.yandex.net/api/v1.5/tr.json/translate?key=${apiKey}&text=${modifiedPlacename}&lang=${lang}`)
     .then((res) => {
       if (!res.ok) {
-        throw new Error('Network problems at Yandex service');
+        return {
+          ru: modifiedPlacename,
+          en: modifiedPlacename,
+          be: modifiedPlacename,
+        };
       }
       return res.json();
     })

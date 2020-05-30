@@ -1,0 +1,39 @@
+// Fonts
+@import url(https://fonts.googleapis.com/css?family=Raleway:400,800,200);
+
+// Colors
+$bg: #41d7f1;
+
+.loader-container {
+  width: 250px;
+  height: 250px;
+  margin: 0 auto;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  margin-right: -50%;
+  transform: translate(-50%, -50%);
+  border: 5px solid $bg;
+  border-radius: 50%;
+  animation: borderScale 1s infinite ease-in-out;
+  z-index: 1;
+}
+
+.loadingText {
+  font-family: 'Raleway', sans-serif;
+  color: rgb(241, 241, 247);
+  font-weight: bold;
+  font-size: 2em;
+  position: absolute;
+  top: 33%;
+  left: 50%;
+  margin-right: -50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+}
+
+@keyframes borderScale {
+  0% {border: 5px solid white;}
+  50% {border: 25px solid $bg;}
+  100% {border: 5px solid white;}
+}

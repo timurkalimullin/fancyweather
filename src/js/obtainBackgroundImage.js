@@ -7,6 +7,9 @@ export default async function obtainBackgroundImage(...args) {
   const query = shuffle([...args]).slice(0, 2);
   const url = `https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=${apiKey}&tags=${query}&tag_mode=all&extras=url_h&format=json&nojsoncallback=1`;
   const res = await fetch(url);
+  if (!res.ok) {
+    throw new Error('Flickr network problems');
+  }
   const data = await res.json();
   const resultData = Object.values(data.photos.photo).filter((el) => el.url_h);
   return resultData;
