@@ -2,7 +2,7 @@
 @import url(https://fonts.googleapis.com/css?family=Raleway:400,800,200);
 
 // Colors
-$bg: #41d7f1;
+$bg: #e4fa80;
 
 .loader-container {
   width: 250px;
@@ -17,11 +17,12 @@ $bg: #41d7f1;
   border-radius: 50%;
   animation: borderScale 1s infinite ease-in-out;
   z-index: 1;
+  background-color: lightcoral;
 }
 
 .loadingText {
   font-family: 'Raleway', sans-serif;
-  color: rgb(241, 241, 247);
+  color: rgb(218, 245, 146);
   font-weight: bold;
   font-size: 2em;
   position: absolute;
@@ -30,10 +31,17 @@ $bg: #41d7f1;
   margin-right: -50%;
   transform: translate(-50%, -50%);
   z-index: 1;
+  animation: textColor 1s infinite ease-in-out;
 }
 
 @keyframes borderScale {
   0% {border: 5px solid white;}
   50% {border: 25px solid $bg;}
   100% {border: 5px solid white;}
+}
+
+@keyframes textColor {
+  0% {color: rgb(218, 245, 146);}
+  50% {color: white;}
+  100% {color: rgb(218, 245, 146);}
 }

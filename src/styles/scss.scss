@@ -63,6 +63,9 @@
       width: 95%;
     }
   }
+  .control-block{
+    margin-bottom: 25px;
+  }
 }
 
 @media (max-width: 630px) {
@@ -83,7 +86,6 @@
   }
   .control-block{
     text-align: center;
-    margin-bottom: 25px;
   }
   .btn__wrapper{
     margin: 0 auto;

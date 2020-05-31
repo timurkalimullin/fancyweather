@@ -21,7 +21,7 @@ class App {
     this.lang = localStorage.lang || 'en';
     this.scale = localStorage.scale || 'cel';
     this.recognition = null;
-    this.recognitionIsStated = false;
+    this.recognitionIsStarted = false;
     this.isModal = false;
   }
 
@@ -76,12 +76,12 @@ class App {
         .join('');
       if (e.results[0].isFinal) {
         this.root.querySelector('.btn__mic').classList.remove('selected');
-        this.recognitionIsStated = false;
+        this.recognitionIsStarted = false;
         saying = saying.toLowerCase();
         if (saying === 'forecast' || saying === 'прогноз' || saying === 'прагноз') {
-          console.log('Speaking forecast');
+          this.readForecast();
         } else {
-          document.querySelector('.search-form__input').value = saying;
+          this.root.querySelector('.search-form__input').value = saying;
           this.handleRequest(saying);
         }
       }
@@ -89,13 +89,29 @@ class App {
 
     this.recognition.start();
     this.root.querySelector('.btn__mic').classList.add('selected');
-    this.recognitionIsStated = true;
+    this.recognitionIsStarted = true;
   }
 
   speechRecognitionStop() {
     this.recognition.stop();
     this.root.querySelector('.btn__mic').classList.remove('selected');
-    this.recognitionIsStated = false;
+    this.recognitionIsStarted = false;
+  }
+
+  readForecast() {
+    const voiceArray = {
+      en: 0,
+      ru: 16,
+      be: 16,
+    };
+    const voiceCurrent = speechSynthesis.getVoices()[voiceArray[this.lang]];
+    const msg = new SpeechSynthesisUtterance();
+    msg.voice = voiceCurrent;
+    msg.text = `${this.locationInfo.placeName[this.lang]},
+    ${this.makeFormattedDate(this.locationInfo.currentTime)},
+    ${this.locationInfo.weatherData.current.temp[this.scale]}
+    `;
+    speechSynthesis.speak(msg);
   }
 
   makeSlide(data) {
@@ -184,7 +200,7 @@ class App {
   }
 
   renderBtnBlock(nodeSelector) {
-    const nodeElement = document.querySelector(nodeSelector);
+    const nodeElement = this.root.querySelector(nodeSelector);
 
     nodeElement.innerHTML = `
       <button class="btn btn__refresh raise"><i class="icon-arrows-cw"></i></button>
@@ -200,12 +216,13 @@ class App {
   }
 
   renderSearchBlock(nodeSelector) {
-    const nodeElement = document.querySelector(nodeSelector);
+    const nodeElement = this.root.querySelector(nodeSelector);
 
     nodeElement.innerHTML = `
     <input type="text" name="search-input" class="search-form__input" placeholder="${translations.placeholder[this.lang]}">
     <button type="submit" class="btn btn__submit"><i class="icon-search"></i></button>
     <button class="btn btn__mic" type="button"><i class="icon-mic"></i></button>
+    <button class="btn btn__sound" type="button"><i class="icon-sound"></i></button>
     `;
   }
 
@@ -217,7 +234,7 @@ class App {
     const feelsLike = this.locationInfo.weatherData.current.feels_like[this.scale];
     const wind = this.locationInfo.weatherData.current.wind_speed;
     const { humidity } = this.locationInfo.weatherData.current;
-    const nodeElement = document.querySelector(nodeSelector);
+    const nodeElement = this.root.querySelector(nodeSelector);
 
     nodeElement.innerHTML = `
       <div class="main__info__wrapper">
@@ -240,13 +257,17 @@ class App {
         <div class="swiper-button-next"></div>
       </div>
     `;
-    document.querySelector('.lang-select').value = this.lang;
+    this.root.querySelector('.lang-select').value = this.lang;
+    this.root.querySelector(`[data=${this.scale}]`).classList.add('selected');
+    if (this.recognitionIsStarted) {
+      this.root.querySelector('.btn__mic').classList.add('selected');
+    }
     setInterval(this.timer.bind(this, ('.main__date')), 1000);
     this.renderSwiper('.swiper-container');
   }
 
   renderMainMap(nodeSelector) {
-    const nodeElement = document.querySelector(nodeSelector);
+    const nodeElement = this.root.querySelector(nodeSelector);
 
     nodeElement.innerHTML = `
       <div id="mapbox" class="mapbox"></div>
@@ -259,7 +280,7 @@ class App {
   renderMapCoordinates(nodeSelector) {
     const latitude = translations.coords.lat[this.lang];
     const longitude = translations.coords.lng[this.lang];
-    const nodeElement = document.querySelector(nodeSelector);
+    const nodeElement = this.root.querySelector(nodeSelector);
 
     nodeElement.innerHTML = `
       <p class="lat">${this.locationInfo.dms.lat}  ${latitude}</p>
@@ -268,7 +289,7 @@ class App {
   }
 
   createPreloader(nodeSelector) {
-    const nodeElement = document.querySelector(nodeSelector);
+    const nodeElement = this.root.querySelector(nodeSelector);
     this.preloader = document.createElement('div');
     this.preloader.classList.add('loader-container');
     this.preloader.innerHTML = ' <p class="loadingText">Loading</p>';
@@ -307,9 +328,9 @@ class App {
   }
 
   clickListener() {
-    document.querySelector('.control-block').addEventListener('click', (e) => {
+    this.root.querySelector('.control-block').addEventListener('click', (e) => {
       if (e.target.closest('.btn__temp-scale')) {
-        document.querySelectorAll('.btn__temp-scale').forEach((el) => {
+        this.root.querySelectorAll('.btn__temp-scale').forEach((el) => {
           el.classList.remove('selected');
         });
         e.target.classList.add('selected');
@@ -320,25 +341,28 @@ class App {
         this.setBackGroundImage();
       }
       if (e.target.closest('.btn__mic')) {
-        if (!this.recognitionIsStated) {
+        if (!this.recognitionIsStarted) {
           this.speechRecognitionStart();
         } else {
           this.speechRecognitionStop();
         }
       }
+      if (e.target.closest('.btn__sound')) {
+        this.readForecast();
+      }
     });
   }
 
   onChangeListener() {
-    document.querySelector('.lang-select').addEventListener('change', (e) => {
+    this.root.querySelector('.lang-select').addEventListener('change', (e) => {
       this.changeLanguage(e.target.value);
     });
   }
 
   submitlistener() {
-    document.querySelector('.search-form').addEventListener('submit', (e) => {
+    this.root.querySelector('.search-form').addEventListener('submit', (e) => {
       e.preventDefault();
-      const searchInput = document.querySelector('.search-form__input');
+      const searchInput = this.root.querySelector('.search-form__input');
       this.handleRequest(searchInput.value);
     });
   }
