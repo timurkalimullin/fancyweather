@@ -23,6 +23,7 @@ class App {
     this.recognition = null;
     this.recognitionIsStarted = false;
     this.isModal = false;
+    this.intervalTimer = null;
   }
 
   async setBackGroundImage() {
@@ -48,12 +49,11 @@ class App {
 
   makeFormattedDate(date) {
     const nonFormatted = new Date(date);
-    const localeFormatted = nonFormatted.toLocaleDateString(this.lang, {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
+    const localeFormatted = `
+    ${translations.days[this.lang][nonFormatted.getDay()]}
+    ${nonFormatted.getDate()}
+    ${translations.months[this.lang][nonFormatted.getMonth()]}
+    `;
     const hours = nonFormatted.getHours() < 10 ? `0${nonFormatted.getHours()}` : nonFormatted.getHours();
     const minutes = nonFormatted.getMinutes() < 10 ? `0${nonFormatted.getMinutes()}` : nonFormatted.getMinutes();
     const seconds = nonFormatted.getSeconds() < 10 ? `0${nonFormatted.getSeconds()}` : nonFormatted.getSeconds();
@@ -99,17 +99,13 @@ class App {
   }
 
   readForecast() {
-    const voiceArray = {
-      en: 0,
-      ru: 16,
-      be: 16,
-    };
-    const voiceCurrent = speechSynthesis.getVoices()[voiceArray[this.lang]];
+    const { id } = this.locationInfo.weatherData.current.weather[0];
     const msg = new SpeechSynthesisUtterance();
-    msg.voice = voiceCurrent;
-    msg.text = `${this.locationInfo.placeName[this.lang]},
-    ${this.makeFormattedDate(this.locationInfo.currentTime)},
-    ${this.locationInfo.weatherData.current.temp[this.scale]}
+    msg.lang = this.lang;
+    msg.text = `${translations.synth.announce[this.lang]} ${this.locationInfo.placeName[this.lang]},
+    ${this.makeFormattedDate(obtainLocaleTime(this.locationInfo.timeOffset))},
+    ${this.locationInfo.weatherData.current.temp[this.scale]} ${translations.synth.scale[this.lang][this.scale]}
+    ${translations.weather_descr[this.lang][id]}
     `;
     speechSynthesis.speak(msg);
   }
@@ -119,15 +115,18 @@ class App {
     const { id } = data.weather[0];
     const { dayTime } = this.locationInfo;
     const MS = 1000;
-    const localeDate = new Date(data.dt * MS).toLocaleString(this.lang, {
-      weekday: 'short', year: 'numeric', month: 'long', day: 'numeric',
-    });
+    const localeDate = new Date(data.dt * MS);
+    const localeDateFormatted = `
+    ${translations.days[this.lang][localeDate.getDay()]}
+    ${localeDate.getDate()}
+    ${translations.months[this.lang][localeDate.getMonth()]}
+    `;
 
     const slide = document.createElement('div');
     slide.classList.add('swiper-slide');
     slide.innerHTML = `
     <div class="swiper-slide__container">
-      <div class="slide__title">${localeDate.toUpperCase()}</div>
+      <div class="slide__title">${localeDateFormatted.toUpperCase()}</div>
       <div class="slide__info">
         <div class="slide__temperature">${tempAvg.toFixed(1)}</div>
         <div class="slide__icon"><img src="${translations.icons[id][dayTime]}" alt="slide-icon"></div>
@@ -221,7 +220,8 @@ class App {
     nodeElement.innerHTML = `
     <input type="text" name="search-input" class="search-form__input" placeholder="${translations.placeholder[this.lang]}">
     <button type="submit" class="btn btn__submit"><i class="icon-search"></i></button>
-    <button class="btn btn__mic" type="button"><i class="icon-mic"></i></button>
+    <button class="btn btn__mic" type="button"><i class="icon-mic"></i><span class="tooltiptext">
+    ${translations.tip[this.lang]}</span></button>
     <button class="btn btn__sound" type="button"><i class="icon-sound"></i></button>
     `;
   }
@@ -262,7 +262,8 @@ class App {
     if (this.recognitionIsStarted) {
       this.root.querySelector('.btn__mic').classList.add('selected');
     }
-    setInterval(this.timer.bind(this, ('.main__date')), 1000);
+    clearInterval(this.intervalTimer);
+    this.intervalTimer = setInterval(this.timer.bind(this, ('.main__date')), 1000);
     this.renderSwiper('.swiper-container');
   }
 
@@ -423,5 +424,4 @@ const app = new App('.app');
 
 window.onload = async () => {
   await app.start();
-  console.log(app);
 };
