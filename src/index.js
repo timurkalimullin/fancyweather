@@ -12,12 +12,17 @@ const mapboxgl = require('mapbox-gl/dist/mapbox-gl.js');
 
 mapboxgl.accessToken = 'pk.eyJ1Ijoicm9ja3liYWxib2Fmcm9tcnVzc2lhIiwiYSI6ImNrYXBkdHRnYzFlOGQycm12ZzQydWN5d3oifQ.OFqcwKaHMKmGkdmYNL27yw';
 
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
 class App {
   constructor(root) {
     this.root = document.querySelector(root);
     this.locationInfo = new LocationInfo();
     this.lang = localStorage.lang || 'en';
     this.scale = localStorage.scale || 'cel';
+    this.recognition = null;
+    this.recognitionIsStated = false;
+    this.isModal = false;
   }
 
   async setBackGroundImage() {
@@ -43,7 +48,7 @@ class App {
 
   makeFormattedDate(date) {
     const nonFormatted = new Date(date);
-    const localeFormatted = nonFormatted.toLocaleString(this.lang, {
+    const localeFormatted = nonFormatted.toLocaleDateString(this.lang, {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
@@ -58,7 +63,39 @@ class App {
   timer(nodeSelector) {
     const momentDate = obtainLocaleTime(this.locationInfo.timeOffset);
     this.locationInfo.currentTime = momentDate;
-    document.querySelector(nodeSelector).innerHTML = this.makeFormattedDate(momentDate);
+    this.root.querySelector(nodeSelector).innerHTML = this.makeFormattedDate(momentDate);
+  }
+
+  speechRecognitionStart() {
+    this.recognition = new SpeechRecognition();
+    this.recognition.interimResults = true;
+    this.recognition.lang = this.lang;
+
+    this.recognition.addEventListener('result', (e) => {
+      let saying = [...e.results].map((res) => res[0]).map((result) => result.transcript)
+        .join('');
+      if (e.results[0].isFinal) {
+        this.root.querySelector('.btn__mic').classList.remove('selected');
+        this.recognitionIsStated = false;
+        saying = saying.toLowerCase();
+        if (saying === 'forecast' || saying === 'прогноз' || saying === 'прагноз') {
+          console.log('Speaking forecast');
+        } else {
+          document.querySelector('.search-form__input').value = saying;
+          this.handleRequest(saying);
+        }
+      }
+    });
+
+    this.recognition.start();
+    this.root.querySelector('.btn__mic').classList.add('selected');
+    this.recognitionIsStated = true;
+  }
+
+  speechRecognitionStop() {
+    this.recognition.stop();
+    this.root.querySelector('.btn__mic').classList.remove('selected');
+    this.recognitionIsStated = false;
   }
 
   makeSlide(data) {
@@ -239,15 +276,19 @@ class App {
   }
 
   createModal(message) {
-    const modal = document.createElement('div');
-    modal.classList.add('modal');
-    modal.innerHTML = `
-      <div class="modal-message">${message}<br><br>Click anywhere to continue</div>
-    `;
-    this.root.append(modal);
-    modal.addEventListener('click', () => {
-      modal.remove();
-    });
+    if (!this.isModal) {
+      this.isModal = true;
+      const modal = document.createElement('div');
+      modal.classList.add('modal');
+      modal.innerHTML = `
+        <div class="modal-message">${message}<br><br>Click anywhere to continue</div>
+      `;
+      this.root.append(modal);
+      modal.addEventListener('click', () => {
+        this.isModal = false;
+        modal.remove();
+      });
+    }
   }
 
   changeLanguage(lang) {
@@ -268,11 +309,22 @@ class App {
   clickListener() {
     document.querySelector('.control-block').addEventListener('click', (e) => {
       if (e.target.closest('.btn__temp-scale')) {
+        document.querySelectorAll('.btn__temp-scale').forEach((el) => {
+          el.classList.remove('selected');
+        });
+        e.target.classList.add('selected');
         const scale = e.target.getAttribute('data');
         this.changeScale(scale);
       }
       if (e.target.closest('.btn__refresh')) {
         this.setBackGroundImage();
+      }
+      if (e.target.closest('.btn__mic')) {
+        if (!this.recognitionIsStated) {
+          this.speechRecognitionStart();
+        } else {
+          this.speechRecognitionStop();
+        }
       }
     });
   }

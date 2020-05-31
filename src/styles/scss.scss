@@ -33,9 +33,10 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-search:before { content: '\e800'; } /* '' */
-.icon-arrows-cw:before { content: '\e801'; } /* '' */
-.icon-mic:before { content: '\f130'; } /* '' */
+.icon-search:before { content: '\e800'; }
+.icon-arrows-cw:before { content: '\e801'; }
+.icon-sound:before { content: '\e802'; }
+.icon-mic:before { content: '\f130'; }
 
 *{
   box-sizing: border-box;

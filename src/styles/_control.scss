@@ -1,13 +1,16 @@
 .btn, select{
-  padding: 3px 6px;
-  border: 2px solid lightgray;
+  padding: 6px 8px;
+  border: 3px solid lightgray;
   border-radius: 4px;
   color: lightgray;
   background: transparent;
   transition: 0.1s all;
+  outline: none;
   &:hover{
     border-color: cyan;
-    color: rgb(247, 115, 177);
+  }
+  &.selected{
+    animation: pulse 2s infinite;
   }
 }
 
@@ -21,7 +24,7 @@
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
-  padding: 15px 8%;
+  padding: 15px 15%;
   margin-bottom: 30px;
 }
 
@@ -32,4 +35,14 @@
 .btn__wrapper{
   width: 240px;
   margin-bottom: 10px;
+}
+
+.swiper-button-next, .swiper-button-prev {
+  color: lightgray;
+}
+
+@keyframes pulse {
+  0%   { border-color: cyan; }
+  50% { border-color: rgb(245, 56, 81); }
+  100% { border-color: cyan; }
 }
