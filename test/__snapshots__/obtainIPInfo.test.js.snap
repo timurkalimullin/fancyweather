@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`obtainIPInfo should return JSON file with property "loc" 1`] = `true`;

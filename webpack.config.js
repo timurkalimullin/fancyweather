@@ -13,7 +13,8 @@ const isProd = !isDev;
 const optimization = () =>{
   const config = {
     splitChunks: {
-      chunks: 'all'
+      chunks: 'all',
+      maxSize: 244000,
     }
   }
 

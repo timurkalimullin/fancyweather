@@ -524,9 +524,9 @@ const translations = {
     },
   },
   tip: {
-    en: 'Say "forecast" to voice the weather while the microphone button is blinking',
-    ru: 'Произнесите "прогноз" для озвучивания погоды во время моргания кнопки микрофона',
-    be: 'Прамоўце "прагноз" для агучвання надвор`я падчас лыпання кнопкі мікрафона',
+    en: 'Say a “forecast” to voice the weather while the microphone button is blinking, or name the settlement for weather',
+    ru: 'Произнесите "прогноз" для озвучивания погоды во время моргания кнопки микрофона или назовите название населенного пункта для поиска погоды',
+    be: 'Прамоўце «прагноз», каб агучыць надвор`е, пакуль міргае кнопка мікрафона, або пакажыце населены пункт для прагнозу надвор`я.',
   },
 };
 

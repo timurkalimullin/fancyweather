@@ -1,6 +1,10 @@
 export default function obtainLocaleSeason(date, lat) {
   const month = new Date(date).getMonth();
 
+  if (lat === undefined || date === undefined) {
+    return 'Can`t find season';
+  }
+
   if (lat >= 0) {
     switch (month) {
       case 11:
