@@ -102,7 +102,7 @@ class App {
     const { id } = this.locationInfo.weatherData.current.weather[0];
     const msg = new SpeechSynthesisUtterance();
     msg.lang = this.lang;
-    msg.text = `${translations.synth.announce[this.lang]} ${this.locationInfo.placeName[this.lang]},
+    msg.text = `${translations.synth.announce[this.lang]} ${this.locationInfo.placeName},
     ${this.makeFormattedDate(obtainLocaleTime(this.locationInfo.timeOffset))},
     ${this.locationInfo.weatherData.current.temp[this.scale]} ${translations.synth.scale[this.lang][this.scale]}
     ${translations.weather_descr[this.lang][id]}
@@ -128,7 +128,7 @@ class App {
     <div class="swiper-slide__container">
       <div class="slide__title">${localeDateFormatted.toUpperCase()}</div>
       <div class="slide__info">
-        <div class="slide__temperature">${tempAvg.toFixed(1)}</div>
+        <div class="slide__temperature">${tempAvg.toFixed(1)} ${translations.temp_units[this.scale]}</div>
         <div class="slide__icon"><img src="${translations.icons[id][dayTime]}" alt="slide-icon"></div>
       </div>
     </div>
@@ -239,7 +239,7 @@ class App {
     nodeElement.innerHTML = `
       <div class="main__info__wrapper">
         <div class="main__info__title">
-          <div class="main__placename">${this.locationInfo.placeName[this.lang]}</div>
+          <div class="main__placename">${this.locationInfo.placeName}</div>
           <div class="main__date">${this.makeFormattedDate(this.locationInfo.currentTime)}</div>
           <div class="main__temperature"><img src="./images/thermometer.svg">${temp} ${translations.temp_units[this.scale]}</div>
           <div class="feelslike">${translations.feelslike[this.lang].toUpperCase()} : ${feelsLike} ${translations.temp_units[this.scale]}</div>

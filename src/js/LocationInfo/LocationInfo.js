@@ -52,7 +52,7 @@ export default class LocationInfo {
     weatherData.current.temp = conversetempScale(weatherData.current.temp);
     weatherData.current.feels_like = conversetempScale(weatherData.current.feels_like);
     weatherData.daily.forEach((day) => {
-    /* eslint-disable no-param-reassign */
+      /* eslint-disable no-param-reassign */
       Object.keys(day.temp).forEach((key) => {
         day.temp[key] = conversetempScale(day.temp[key]);
       });
@@ -77,13 +77,15 @@ export default class LocationInfo {
     await this.getDatafromCoordinates();
     await this.getWeatheratCoordinates();
     this.getTimeData();
-    await this.translatePlacename();
+    console.log(this.placeName);
+    // await this.translatePlacename();
   }
 
   async findWeatherAtPlace(placeName) {
     await this.getDatafromPlacename(placeName);
     await this.getWeatheratCoordinates();
     this.getTimeData();
-    await this.translatePlacename();
+    console.log(this.placeName);
+    // await this.translatePlacename();
   }
 }
