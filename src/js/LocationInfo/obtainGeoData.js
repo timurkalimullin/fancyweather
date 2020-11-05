@@ -1,6 +1,6 @@
 
-async function obtainGeoDatafromCoord(apiKey, lat, lng) {
-  const url = `https://api.opencagedata.com/geocode/v1/json?q=${lat},${lng}&key=${apiKey}&abbrv=0`;
+async function obtainGeoDatafromCoord(apiKey, lat, lng, language) {
+  const url = `https://api.opencagedata.com/geocode/v1/json?q=${lat},${lng}&key=${apiKey}&abbrv=0&language=${language}`;
   const res = await fetch(url);
   if (!res.ok) {
     throw new Error('Opencagedata Network problems');
@@ -9,8 +9,8 @@ async function obtainGeoDatafromCoord(apiKey, lat, lng) {
   return data;
 }
 
-async function obtainGeoDatafromPlaceName(apiKey, place) {
-  const url = `https://api.opencagedata.com/geocode/v1/json?q=${place}&key=${apiKey}&abbrv=0`;
+async function obtainGeoDatafromPlaceName(apiKey, place, language) {
+  const url = `https://api.opencagedata.com/geocode/v1/json?q=${place}&key=${apiKey}&abbrv=0&language=${language}`;
   const res = await fetch(url);
   if (!res.ok) {
     if (res.status === 400 || res.status === 410) {

@@ -17,9 +17,9 @@ const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecogni
 class App {
   constructor(root) {
     this.root = document.querySelector(root);
-    this.locationInfo = new LocationInfo();
     this.lang = localStorage.lang || 'en';
     this.scale = localStorage.scale || 'cel';
+    this.locationInfo = new LocationInfo(this.lang);
     this.recognition = null;
     this.recognitionIsStarted = false;
     this.isModal = false;
@@ -356,7 +356,11 @@ class App {
 
   onChangeListener() {
     this.root.querySelector('.lang-select').addEventListener('change', (e) => {
+      this.lang = e.target.value;
       this.changeLanguage(e.target.value);
+      if (this.searchValue) {
+        this.handleRequest(this.searchValue);
+      }
     });
   }
 
@@ -364,6 +368,7 @@ class App {
     this.root.querySelector('.search-form').addEventListener('submit', (e) => {
       e.preventDefault();
       const searchInput = this.root.querySelector('.search-form__input');
+      this.searchValue = searchInput.value;
       this.handleRequest(searchInput.value);
     });
   }
@@ -381,6 +386,7 @@ class App {
       this.renderSearchBlock('.search-form');
       this.createPreloader('.main');
       await this.locationInfo.initialLoad();
+      this.searchValue = this.locationInfo.placeName;
       await this.setBackGroundImage();
       this.preloader.remove();
       this.renderMainInfo('.main__info');
@@ -396,7 +402,7 @@ class App {
   async handleRequest(request) {
     try {
       this.createPreloader('.main');
-      await this.locationInfo.findWeatherAtPlace(request);
+      await this.locationInfo.findWeatherAtPlace(request, this.lang);
       await this.setBackGroundImage();
       this.preloader.remove();
       this.renderMainInfo('.main__info');

@@ -12,7 +12,8 @@ const apiKeyWeather = 'df8d41cc3412c9b1ac992d87f6fa81d3';
 const apiKeyGeoData = '5f01a3a9d68f415c94ad261794e7fae4';
 
 export default class LocationInfo {
-  constructor() {
+  constructor(lang) {
+    this.initialLang = lang;
     this.coord = null;
     this.timeOffset = null;
     this.placeName = null;
@@ -36,14 +37,14 @@ export default class LocationInfo {
     this.dms = data.results[0].annotations.DMS;
   }
 
-  async getDatafromPlacename(placeName) {
-    const geoData = await obtainGeoDatafromPlaceName(apiKeyGeoData, placeName);
+  async getDatafromPlacename(placeName, lang) {
+    const geoData = await obtainGeoDatafromPlaceName(apiKeyGeoData, placeName, lang);
     this.formLocationData(geoData);
   }
 
   /* eslint-disable max-len */
-  async getDatafromCoordinates() {
-    const geoData = await obtainGeoDatafromCoord(apiKeyGeoData, this.coord.lat, this.coord.lng);
+  async getDatafromCoordinates(lang) {
+    const geoData = await obtainGeoDatafromCoord(apiKeyGeoData, this.coord.lat, this.coord.lng, lang);
     this.formLocationData(geoData);
   }
 
@@ -74,18 +75,14 @@ export default class LocationInfo {
 
   async initialLoad() {
     await this.getUserCoordinates();
-    await this.getDatafromCoordinates();
+    await this.getDatafromCoordinates(this.initialLang);
     await this.getWeatheratCoordinates();
     this.getTimeData();
-    console.log(this.placeName);
-    // await this.translatePlacename();
   }
 
-  async findWeatherAtPlace(placeName) {
-    await this.getDatafromPlacename(placeName);
+  async findWeatherAtPlace(placeName, lang) {
+    await this.getDatafromPlacename(placeName, lang);
     await this.getWeatheratCoordinates();
     this.getTimeData();
-    console.log(this.placeName);
-    // await this.translatePlacename();
   }
 }
